@@ -17,15 +17,26 @@ UInteractiveComponent::UInteractiveComponent()
 void UInteractiveComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
 	
 }
+
 
 
 void UInteractiveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	SphereTraceSingle();
+}
+void UInteractiveComponent::Interactive()
+{
+	if(bRaycastHitingObject && bCanInterActive == true)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Hit"));
+	}
+}
+
+void UInteractiveComponent::SphereTraceSingle()
+{
 	FVector ActorLocation = CurrentObject->GetActorLocation();
 	FVector ActorStartLocation(ActorLocation.X+RayCastStartLocationOffset.X,ActorLocation.Y+RayCastStartLocationOffset.Y,ActorLocation.Z+RayCastStartLocationOffset.Z);
 	FVector ActorEndLocation = (CurrentObject->GetActorForwardVector()*RayCastLength)+ActorStartLocation;
@@ -48,15 +59,12 @@ void UInteractiveComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	if(Hit)
 	{
-		GEngine->AddOnScreenDebugMessage(-1,60,FColor::Orange,FString::Printf(TEXT("Casting")));
-		RaycastHitingObject = Hit;
-	}
-}
-void UInteractiveComponent::Interactive()
-{
-	if(RaycastHitingObject)
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Hit"));
+		if(OutHit.GetActor()->ActorHasTag("InterActiveObj"))
+		{
+			GEngine->AddOnScreenDebugMessage(-1,1,FColor::Orange,FString::Printf(TEXT("Casting")));
+			bRaycastHitingObject = Hit;
+			bCanInterActive = true;
+		}
 	}
 }
 

@@ -30,16 +30,18 @@ public:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "RayCast")
 	float RayCastRadius;
+	
+	UFUNCTION(BlueprintCallable,Category="RayCastInteractive")
+	void Interactive();
 
 	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	bool bCanInterActive;
 
 private:
-	bool RaycastHitingObject;
-	
-	UFUNCTION(BlueprintCallable,Category="RayCastInteractive")
-	void Interactive();
+	bool bRaycastHitingObject;
 
+	void SphereTraceSingle();
 };
