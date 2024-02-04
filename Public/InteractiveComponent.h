@@ -38,5 +38,8 @@ protected:
 
 private:
 	bool RaycastHitingObject;
+	
+	UFUNCTION(BlueprintCallable,Category="RayCastInteractive")
 	void Interactive();
+
 };

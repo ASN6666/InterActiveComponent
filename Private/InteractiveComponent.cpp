@@ -48,7 +48,7 @@ void UInteractiveComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	if(Hit)
 	{
-		GEngine->AddOnScreenDebugMessage(123,60,FColor::Orange,FString::Printf(TEXT("Casting")));
+		GEngine->AddOnScreenDebugMessage(-1,60,FColor::Orange,FString::Printf(TEXT("Casting")));
 		RaycastHitingObject = Hit;
 	}
 }
