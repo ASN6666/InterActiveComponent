@@ -20,6 +20,8 @@ void UInteractiveComponent::BeginPlay()
 	
 }
 
+
+
 void UInteractiveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -35,38 +37,34 @@ void UInteractiveComponent::Interactive()
 
 void UInteractiveComponent::SphereTraceSingle()
 {
-	if(CurrentObject)
+	FVector ActorLocation = CurrentObject->GetActorLocation();
+	FVector ActorStartLocation(ActorLocation.X+RayCastStartLocationOffset.X,ActorLocation.Y+RayCastStartLocationOffset.Y,ActorLocation.Z+RayCastStartLocationOffset.Z);
+	FVector ActorEndLocation = (CurrentObject->GetActorForwardVector()*RayCastLength)+ActorStartLocation;
+	FHitResult OutHit;
+
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(CurrentObject);
+	bool Hit = UKismetSystemLibrary::SphereTraceSingle(this,
+		ActorStartLocation,
+		ActorEndLocation,
+		RayCastRadius,
+		TraceTypeQuery1,
+		false,
+		ActorsToIgnore,
+		EDrawDebugTrace::ForDuration,OutHit,
+		true,
+		FLinearColor::Green,
+		FLinearColor::Red,
+		0.f);
+
+	if(Hit)
 	{
-		FVector ActorLocation = CurrentObject->GetActorLocation();
-		FVector ActorStartLocation(ActorLocation.X+RayCastStartLocationOffset.X,ActorLocation.Y+RayCastStartLocationOffset.Y,ActorLocation.Z+RayCastStartLocationOffset.Z);
-		FVector ActorEndLocation = (CurrentObject->GetActorForwardVector()*RayCastLength)+ActorStartLocation;
-		FHitResult OutHit;
-
-		TArray<AActor*> ActorsToIgnore;
-		ActorsToIgnore.Add(CurrentObject);
-		bool Hit = UKismetSystemLibrary::SphereTraceSingle(this,
-			ActorStartLocation,
-			ActorEndLocation,
-			RayCastRadius,
-			TraceTypeQuery1,
-			false,
-			ActorsToIgnore,
-			EDrawDebugTrace::ForDuration,OutHit,
-			true,
-			FLinearColor::Green,
-			FLinearColor::Red,
-			0.f);
-
-		if(Hit)
+		if(OutHit.GetActor()->ActorHasTag("InterActiveObj"))
 		{
-			if(OutHit.GetActor()->ActorHasTag("InterActiveObj"))
-			{
-				GEngine->AddOnScreenDebugMessage(-1,1,FColor::Orange,FString::Printf(TEXT("Casting")));
-				bRaycastHitingObject = Hit;
-				bCanInterActive = true;
-			}
+			GEngine->AddOnScreenDebugMessage(-1,1,FColor::Orange,FString::Printf(TEXT("Casting")));
+			bRaycastHitingObject = Hit;
+			bCanInterActive = true;
 		}
-		
 	}
 }
 
